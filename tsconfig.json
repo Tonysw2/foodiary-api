@@ -16,6 +16,13 @@
     "moduleResolution": "nodenext",
     "noImplicitOverride": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@kernel/*": ["src/kernel/*"],
+      "@main/*": ["src/main/*"]
+    }
   }
 }

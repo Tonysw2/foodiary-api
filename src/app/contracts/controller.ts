@@ -1,5 +1,5 @@
+import { getSchema } from '@kernel/decorators/schema.js'
 import type { z } from 'zod/mini'
-import { getSchema } from '../../kernel/decorators/schema.js'
 
 export abstract class Controller<TBody = undefined> {
   protected schema?: z.ZodMiniType<Controller.Request['body']>
