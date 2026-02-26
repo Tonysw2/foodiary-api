@@ -2,7 +2,7 @@ import type { z } from 'zod/mini'
 import { getSchema } from '../../kernel/decorators/schema.js'
 
 export abstract class Controller<TBody = undefined> {
-  protected schema?: z.ZodMiniObject
+  protected schema?: z.ZodMiniType<Controller.Request['body']>
 
   protected abstract handle(
     params: Controller.Request,
@@ -20,7 +20,7 @@ export abstract class Controller<TBody = undefined> {
   }
 
   private validateBody(body: Controller.Request['body']) {
-    const schema = getSchema(this)
+    const schema = getSchema<Controller.Request['body']>(this)
 
     if (!schema) {
       return body
