@@ -3,10 +3,10 @@ import type {
   APIGatewayProxyResultV2,
 } from 'aws-lambda'
 import { z } from 'zod/mini'
-import type { IController } from '../../app/contracts/controller.js'
+import type { Controller } from '../../app/contracts/controller.js'
 import { lambdaBodyParser } from '../utils/lambda-body-parser.js'
 
-export function lambdaHttpAdapter(controller: IController<unknown>) {
+export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
     event: APIGatewayProxyEventV2,
   ): Promise<APIGatewayProxyResultV2> => {
@@ -16,7 +16,7 @@ export function lambdaHttpAdapter(controller: IController<unknown>) {
       const params = event.pathParameters ?? {}
       const queryParams = event.queryStringParameters ?? {}
 
-      const response = await controller.handle({
+      const response = await controller.execute({
         body,
         params,
         queryParams,

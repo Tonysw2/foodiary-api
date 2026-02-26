@@ -1,8 +1,30 @@
-export interface IController<TBody = undefined> {
-  handle: (params: IController.Request) => Promise<IController.Response<TBody>>
+import type { z } from 'zod/mini'
+
+export abstract class Controller<TBody = undefined> {
+  protected schema?: z.ZodMiniObject
+
+  protected abstract handle(
+    params: Controller.Request,
+  ): Promise<Controller.Response<TBody>>
+
+  public execute(
+    params: Controller.Request,
+  ): Promise<Controller.Response<TBody>> {
+    const body = this.validateBody(params.body)
+
+    return this.handle({
+      ...params,
+      body,
+    })
+  }
+
+  private validateBody(body: Controller.Request['body']) {
+    if (!this.schema) return body
+    return this.schema.parse(body)
+  }
 }
 
-export namespace IController {
+export namespace Controller {
   export type Request<
     TBody = Record<string, unknown>,
     TParams = Record<string, unknown>,
