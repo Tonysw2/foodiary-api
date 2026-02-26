@@ -4,7 +4,10 @@ import type {
 } from 'aws-lambda'
 import { z } from 'zod/mini'
 import type { Controller } from '../../app/contracts/controller.js'
+import { ErrorCode } from '../../app/errors/error-code.js'
+import { HttpError } from '../../app/errors/http/http-error.js'
 import { lambdaBodyParser } from '../utils/lambda-body-parser.js'
+import { lambdaErrorResponse } from '../utils/lambda-error-response.js'
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
@@ -28,29 +31,25 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
       }
     } catch (error) {
       if (error instanceof z.core.$ZodError) {
-        return {
+        return lambdaErrorResponse({
           statusCode: 400,
-          body: JSON.stringify({
-            error: {
-              code: 'VALIDATION',
-              message: error.issues.map((issue) => ({
-                field: issue.path.join('.'),
-                error: issue.message,
-              })),
-            },
-          }),
-        }
+          code: ErrorCode.VALIDATION,
+          message: error.issues.map((issue) => ({
+            field: issue.path.join('.'),
+            error: issue.message,
+          })),
+        })
       }
 
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: {
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Internal server error.',
-          },
-        }),
+      if (error instanceof HttpError) {
+        return lambdaErrorResponse(error)
       }
+
+      return lambdaErrorResponse({
+        statusCode: 500,
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error.',
+      })
     }
   }
 }
