@@ -33,7 +33,10 @@ export function lambdaHttpAdapter(controller: IController<unknown>) {
           body: JSON.stringify({
             error: {
               code: 'VALIDATION',
-              message: error.issues,
+              message: error.issues.map((issue) => ({
+                field: issue.path.join('.'),
+                error: issue.message,
+              })),
             },
           }),
         }
