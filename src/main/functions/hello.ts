@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { HelloController } from '../../app/controllers/hello-controller.js'
 import { lambdaHttpAdapter } from '../adapters/lambda-http-adapter.js'
 
