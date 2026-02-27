@@ -24,6 +24,9 @@ importers:
       '@types/node':
         specifier: ^25.3.0
         version: 25.3.0
+      esbuild-plugin-tsc:
+        specifier: ^0.5.0
+        version: 0.5.0(typescript@5.9.3)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -89,8 +92,17 @@ packages:
   '@types/node@25.3.0':
     resolution: {integrity: sha512-4K3bqJpXpqfg2XKGK9bpDTc6xO/xoUP/RBWS7AtRMug6zZFaRekiLzjVtAoZMquxoAbzBvy5nxQ7veS5eYzf8A==}
 
+  esbuild-plugin-tsc@0.5.0:
+    resolution: {integrity: sha512-t9j90NnMhAGWzS0SKX3zNa/XeWcUanqKaFe36CSmXiB2nYFdaSzKY9pBZTvGV7NGImxE1BktOOlVpQyYnUTVGg==}
+    peerDependencies:
+      typescript: ^4.0.0 || ^5.0.0
+
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+
+  strip-comments@2.0.1:
+    resolution: {integrity: sha512-ZprKx+bBLXv067WTCALv8SSz5l2+XhpYCsVtSqlMnkAXMWDq+/ekVbl1ghqP9rUHTzv6sm/DwCOiYutU/yp1fw==}
+    engines: {node: '>=10'}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -146,7 +158,14 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
+  esbuild-plugin-tsc@0.5.0(typescript@5.9.3):
+    dependencies:
+      strip-comments: 2.0.1
+      typescript: 5.9.3
+
   reflect-metadata@0.2.2: {}
+
+  strip-comments@2.0.1: {}
 
   typescript@5.9.3: {}
 
