@@ -10,13 +10,16 @@ export class SignUpUseCase {
     email,
     password,
   }: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
-    const { externalId } = await this.authGateway.signUp({ email, password })
+    await this.authGateway.signUp({ email, password })
 
-    // TODO: persist externalId to database
+    const { accessToken, refreshToken } = await this.authGateway.signIn({
+      email,
+      password,
+    })
 
     return {
-      accessToken: 'stub-access-token',
-      refreshToken: 'stub-refresh-token',
+      accessToken,
+      refreshToken,
     }
   }
 }

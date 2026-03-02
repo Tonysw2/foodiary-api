@@ -5,3 +5,12 @@ signUp:
     - httpApi:
         path: /auth/sign-up
         method: POST
+
+preSignUp:
+  handler: src/main/functions/auth/pre-sign-up.handler
+  events:
+    - cognitoUserPool:
+        pool: ${self:custom.cognito.PoolName}
+        trigger: PreSignUp
+        existing: true
+        forceDeploy: true
