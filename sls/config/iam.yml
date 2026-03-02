@@ -1,0 +1,10 @@
+statements:
+  - Effect: Allow
+    Action:
+      - dynamodb:PutItem
+      - dynamodb:Query
+      - dynamodb:GetItem
+      - dynamodb:UpdateItem
+    Resource:
+      - !GetAtt MainTable.Arn
+      - !Sub "${MainTable.Arn}/index/*"

@@ -7,6 +7,8 @@ provider:
   runtime: nodejs24.x
   memorySize: 128
   stage: ${opt:stage, 'dev'}
+  iam:
+    role: ${file(./sls/config/iam.yml)}
   httpApi:
     authorizers:
       cognitoAuthorizer:
@@ -32,3 +34,4 @@ functions:
 
 resources:
   - ${file(./sls/resources/cognito.yml)}
+  - ${file(./sls/resources/main-table.yml)}
