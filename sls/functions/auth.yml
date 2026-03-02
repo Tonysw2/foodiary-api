@@ -1,5 +1,6 @@
 signUp:
   handler: src/main/functions/auth/sign-up.handler
+  environment: ${file(./sls/env.yml)}
   events:
     - httpApi:
         path: /auth/sign-up
