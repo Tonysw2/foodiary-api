@@ -1,4 +1,5 @@
 import { Account } from '@app/entities/account.js'
+import { EmailAlreadyInUse } from '@app/errors/application/email-already-in-use'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
 import { AccountRepository } from '@app/infra/database/dynamo/repositories/account-repository.js'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
@@ -16,6 +17,12 @@ export class SignUpUseCase {
     email,
     password,
   }: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
+    const accountExists = await this.accountRepository.findByEmail(email)
+
+    if (accountExists) {
+      throw new EmailAlreadyInUse()
+    }
+
     const { externalId } = await this.authGateway.signUp({ email, password })
 
     const account = new Account({ email, externalId })

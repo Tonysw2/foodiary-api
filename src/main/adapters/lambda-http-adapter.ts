@@ -1,4 +1,5 @@
 import type { Controller } from '@app/contracts/controller.js'
+import { ApplicationError } from '@app/errors/application/application-error.js'
 import { ErrorCode } from '@app/errors/error-code.js'
 import { HttpError } from '@app/errors/http/http-error.js'
 import { lambdaBodyParser } from '@main/utils/lambda-body-parser.js'
@@ -38,6 +39,14 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
             field: issue.path.join('.'),
             error: issue.message,
           })),
+        })
+      }
+
+      if (error instanceof ApplicationError) {
+        return lambdaErrorResponse({
+          statusCode: error.statusCode ?? 400,
+          code: error.code,
+          message: error.message,
         })
       }
 

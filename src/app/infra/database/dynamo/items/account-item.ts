@@ -1,4 +1,4 @@
-import type { Account } from '@app/entities/account'
+import { Account } from '@app/entities/account'
 
 export class AccountItem {
   private readonly type = 'Account'
@@ -19,6 +19,15 @@ export class AccountItem {
       ...this.attr,
       type: this.type,
     }
+  }
+
+  static toEntity(accountItem: AccountItem.ItemType): Account {
+    return new Account({
+      id: accountItem.id,
+      email: accountItem.email,
+      externalId: accountItem.externalId,
+      createdAt: new Date(accountItem.createdAt),
+    })
   }
 
   static fromEntity(account: Account) {
