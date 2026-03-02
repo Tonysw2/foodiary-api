@@ -31,4 +31,4 @@ functions:
   - ${file(./sls/functions/auth.yml)}
 
 resources:
-  - ${file(./sls/cognito.yml)}
+  - ${file(./sls/resources/cognito.yml)}
