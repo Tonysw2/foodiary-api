@@ -6,6 +6,14 @@ signUp:
         path: /auth/sign-up
         method: POST
 
+signIn:
+  handler: src/main/functions/auth/sign-in.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        path: /auth/sign-in
+        method: POST
+
 preSignUp:
   handler: src/main/functions/auth/pre-sign-up.handler
   events:
