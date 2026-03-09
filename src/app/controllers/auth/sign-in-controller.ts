@@ -7,14 +7,14 @@ import { type SignInBody, signInSchema } from './schemas/sign-in-schema.js'
 
 @Injectable()
 @Schema(signInSchema)
-export class SignInController extends Controller<SignInUseCase.Output> {
+export class SignInController extends Controller<SignInController.Response> {
   constructor(private readonly signInUseCase: SignInUseCase) {
     super()
   }
 
   protected override async handle(
     request: Controller.Request<SignInBody>,
-  ): Promise<Controller.Response<SignInUseCase.Output>> {
+  ): Promise<Controller.Response<SignInController.Response>> {
     const { email, password } = request.body
     const { accessToken, refreshToken } = await this.signInUseCase.execute({
       email,
@@ -25,5 +25,12 @@ export class SignInController extends Controller<SignInUseCase.Output> {
       statusCode: 201,
       body: { accessToken, refreshToken },
     }
+  }
+}
+
+export namespace SignInController {
+  export type Response = {
+    accessToken: string
+    refreshToken: string
   }
 }

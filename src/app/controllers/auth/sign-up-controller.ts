@@ -7,14 +7,14 @@ import { type SignUpBody, signUpSchema } from './schemas/sign-up-schema.js'
 
 @Injectable()
 @Schema(signUpSchema)
-export class SignUpController extends Controller<SignUpUseCase.Output> {
+export class SignUpController extends Controller<SignUpController.Response> {
   constructor(private readonly signUpUseCase: SignUpUseCase) {
     super()
   }
 
   protected override async handle(
     request: Controller.Request<SignUpBody>,
-  ): Promise<Controller.Response<SignUpUseCase.Output>> {
+  ): Promise<Controller.Response<SignUpController.Response>> {
     const { account } = request.body
     const { accessToken, refreshToken } = await this.signUpUseCase.execute({
       email: account.email,
@@ -25,5 +25,12 @@ export class SignUpController extends Controller<SignUpUseCase.Output> {
       statusCode: 201,
       body: { accessToken, refreshToken },
     }
+  }
+}
+
+export namespace SignUpController {
+  export type Response = {
+    accessToken: string
+    refreshToken: string
   }
 }
