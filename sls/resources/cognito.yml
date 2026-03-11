@@ -26,7 +26,7 @@ Resources:
         - Name: internalId
           AttributeDataType: String
           Mutable: false
-          Required: true
+          Required: false
       LambdaConfig:
         PreTokenGenerationConfig:
           LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
