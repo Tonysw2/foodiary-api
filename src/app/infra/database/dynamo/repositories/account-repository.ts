@@ -14,7 +14,7 @@ export class AccountRepository {
     const command = new QueryCommand({
       TableName: this.appConfig.database.dynamodb.mainTableName,
       IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :GSI1PK AND #GSI1SK = :GSI1SK',
+      KeyConditionExpression: 'GSI1PK = :GSI1PK AND GSI1SK = :GSI1SK',
       ExpressionAttributeValues: {
         ':GSI1PK': AccountItem.getGSI1PK(email),
         ':GSI1SK': AccountItem.getGSI1SK(email),
