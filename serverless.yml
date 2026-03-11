@@ -14,7 +14,7 @@ provider:
       cognitoAuthorizer:
         type: jwt
         identitySource: $request.header.Authorization
-        issuerUrl: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
+        issuerUrl: !GetAtt UserPool.ProviderURL
         audience:
           - !Ref UserPoolClient
 
