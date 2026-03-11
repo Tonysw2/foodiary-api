@@ -1,5 +1,6 @@
 import { createHmac } from 'node:crypto'
 import {
+  GetTokensFromRefreshTokenCommand,
   InitiateAuthCommand,
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider'
@@ -60,6 +61,27 @@ export class AuthGateway {
     return { accessToken, refreshToken }
   }
 
+  async refreshToken({
+    refreshToken,
+  }: AuthGateway.RefreshTokenInput): Promise<AuthGateway.RefreshTokenOutput> {
+    const command = new GetTokensFromRefreshTokenCommand({
+      ClientId: this.appConfig.auth.cognito.clientId,
+      ClientSecret: this.appConfig.auth.cognito.clientSecret,
+      RefreshToken: refreshToken,
+    })
+
+    const { AuthenticationResult } = await cognitoClient.send(command)
+
+    const accessToken = AuthenticationResult?.AccessToken
+    const newRefreshToken = AuthenticationResult?.RefreshToken
+
+    if (!accessToken || !newRefreshToken) {
+      throw new Error('Cannot refresh token')
+    }
+
+    return { accessToken, refreshToken: newRefreshToken }
+  }
+
   private getSecretHash(email: string) {
     const { clientId, clientSecret } = this.appConfig.auth.cognito
 
@@ -86,6 +108,15 @@ export namespace AuthGateway {
   }
 
   export type SignInOutput = {
+    accessToken: string
+    refreshToken: string
+  }
+
+  export type RefreshTokenInput = {
+    refreshToken: string
+  }
+
+  export type RefreshTokenOutput = {
     accessToken: string
     refreshToken: string
   }
