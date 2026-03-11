@@ -7,13 +7,13 @@ import { type SignInBody, signInSchema } from './schemas/sign-in-schema.js'
 
 @Injectable()
 @Schema(signInSchema)
-export class SignInController extends Controller<SignInController.Response> {
+export class SignInController extends Controller<'public', SignInController.Response> {
   constructor(private readonly signInUseCase: SignInUseCase) {
     super()
   }
 
   protected override async handle(
-    request: Controller.Request<SignInBody>,
+    request: Controller.Request<'public', SignInBody>,
   ): Promise<Controller.Response<SignInController.Response>> {
     const { email, password } = request.body
     const { accessToken, refreshToken } = await this.signInUseCase.execute({

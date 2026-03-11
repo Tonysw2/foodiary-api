@@ -22,3 +22,9 @@ preSignUp:
         trigger: PreSignUp
         existing: true
         forceDeploy: true
+
+# The trigger was configured manually to support event V2
+# Look at UserPool.yml for trigger config
+# Do not change this function name without change in the cognito.yml
+preTokenGenerationTrigger:
+  handler: src/main/functions/auth/pre-token-generation.handler

@@ -23,9 +23,9 @@ export class SignUpUseCase {
       throw new EmailAlreadyInUse()
     }
 
-    const { externalId } = await this.authGateway.signUp({ email, password })
-
-    const account = new Account({ email, externalId })
+    const account = new Account({ email })
+    const { externalId } = await this.authGateway.signUp({ email, password, internalId: account.id })
+    account.externalId = externalId
     await this.accountRepository.create(account)
 
     const { accessToken, refreshToken } = await this.authGateway.signIn({

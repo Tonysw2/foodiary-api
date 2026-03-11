@@ -6,24 +6,30 @@ import { lambdaBodyParser } from '@main/utils/lambda-body-parser.js'
 import { lambdaErrorResponse } from '@main/utils/lambda-error-response.js'
 import type {
   APIGatewayProxyEventV2,
+  APIGatewayProxyEventV2WithJWTAuthorizer,
   APIGatewayProxyResultV2,
 } from 'aws-lambda'
 import { z } from 'zod/mini'
 
-export function lambdaHttpAdapter(controller: Controller<unknown>) {
-  return async (
-    event: APIGatewayProxyEventV2,
-  ): Promise<APIGatewayProxyResultV2> => {
+type Event = APIGatewayProxyEventV2 | APIGatewayProxyEventV2WithJWTAuthorizer
+
+// biome-ignore lint/suspicious/noExplicitAny: adapter accepts both public and private controllers
+export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
+  return async (event: Event): Promise<APIGatewayProxyResultV2> => {
     try {
       const body = lambdaBodyParser(event.body)
-
       const params = event.pathParameters ?? {}
       const queryParams = event.queryStringParameters ?? {}
+      const accountId =
+        'authorizer' in event.requestContext
+          ? (event.requestContext.authorizer.jwt.claims.internalId as string)
+          : null
 
       const response = await controller.execute({
         body,
         params,
         queryParams,
+        accountId,
       })
 
       return {
