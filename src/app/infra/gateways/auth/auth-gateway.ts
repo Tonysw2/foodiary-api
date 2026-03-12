@@ -1,4 +1,5 @@
 import { createHmac } from 'node:crypto'
+import { InvalidRefreshToken } from '@app/errors/application/invalid-refresh-token.js'
 import {
   ConfirmForgotPasswordCommand,
   ForgotPasswordCommand,
@@ -66,22 +67,26 @@ export class AuthGateway {
   async refreshToken({
     refreshToken,
   }: AuthGateway.RefreshTokenInput): Promise<AuthGateway.RefreshTokenOutput> {
-    const command = new GetTokensFromRefreshTokenCommand({
-      ClientId: this.appConfig.auth.cognito.clientId,
-      ClientSecret: this.appConfig.auth.cognito.clientSecret,
-      RefreshToken: refreshToken,
-    })
+    try {
+      const command = new GetTokensFromRefreshTokenCommand({
+        ClientId: this.appConfig.auth.cognito.clientId,
+        ClientSecret: this.appConfig.auth.cognito.clientSecret,
+        RefreshToken: refreshToken,
+      })
 
-    const { AuthenticationResult } = await cognitoClient.send(command)
+      const { AuthenticationResult } = await cognitoClient.send(command)
 
-    const accessToken = AuthenticationResult?.AccessToken
-    const newRefreshToken = AuthenticationResult?.RefreshToken
+      const accessToken = AuthenticationResult?.AccessToken
+      const newRefreshToken = AuthenticationResult?.RefreshToken
 
-    if (!accessToken || !newRefreshToken) {
-      throw new Error('Cannot refresh token')
+      if (!accessToken || !newRefreshToken) {
+        throw new InvalidRefreshToken()
+      }
+
+      return { accessToken, refreshToken: newRefreshToken }
+    } catch {
+      throw new InvalidRefreshToken()
     }
-
-    return { accessToken, refreshToken: newRefreshToken }
   }
 
   async forgotPassword({
