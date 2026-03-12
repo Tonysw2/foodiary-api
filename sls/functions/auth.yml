@@ -22,6 +22,22 @@ refreshToken:
         path: /auth/refresh-token
         method: POST
 
+forgotPassword:
+  handler: src/main/functions/auth/forgot-password.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        path: /auth/forgot-password
+        method: POST
+
+confirmForgotPassword:
+  handler: src/main/functions/auth/confirm-forgot-password.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        path: /auth/confirm-forgot-password
+        method: POST
+
 preSignUp:
   handler: src/main/functions/auth/pre-sign-up.handler
   events:
