@@ -31,6 +31,16 @@ Resources:
         PreTokenGenerationConfig:
           LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
           LambdaVersion: V2_0
+        CustomMessage: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-customMessageTrigger"
+
+  CustomMessageTriggerPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CustomMessageTriggerLambdaFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-customMessageTrigger"
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
 
   PreTokenGenerationTriggerPermission:
     Type: AWS::Lambda::Permission
