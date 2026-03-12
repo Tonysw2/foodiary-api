@@ -1,4 +1,4 @@
-import ForgotPasswordEmail from '@app/infra/emails/templates/auth/forgot-password'
+import ForgotPasswordEmail from '@infra/emails/templates/auth/forgot-password'
 import { render } from '@react-email/render'
 import type { CustomMessageTriggerEvent } from 'aws-lambda'
 

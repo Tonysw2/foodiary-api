@@ -1,9 +1,9 @@
 import { Account } from '@app/entities/account.js'
 import { EmailAlreadyInUse } from '@app/errors/application/email-already-in-use'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
-import { AccountRepository } from '@app/infra/database/dynamo/repositories/account-repository.js'
+import { AccountRepository } from '@infra/database/dynamo/repositories/account-repository.js'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
-import { AuthGateway } from '@app/infra/gateways/auth/auth-gateway.js'
+import { AuthGateway } from '@infra/gateways/auth/auth-gateway.js'
 import { Injectable } from '@kernel/decorators/injectable.js'
 
 @Injectable()

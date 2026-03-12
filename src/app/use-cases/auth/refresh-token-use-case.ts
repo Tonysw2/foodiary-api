@@ -1,5 +1,5 @@
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
-import { AuthGateway } from '@app/infra/gateways/auth/auth-gateway.js'
+import { AuthGateway } from '@infra/gateways/auth/auth-gateway.js'
 import { Injectable } from '@kernel/decorators/injectable'
 
 @Injectable()

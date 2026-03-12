@@ -1,5 +1,5 @@
 import type { Account } from '@app/entities/account'
-import { dynamoClient } from '@app/infra/clients/dynamo-client'
+import { dynamoClient } from '@infra/clients/dynamo-client'
 import { PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { Injectable } from '@kernel/decorators/injectable'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata

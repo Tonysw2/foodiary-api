@@ -39,7 +39,7 @@ confirmForgotPassword:
         method: POST
 
 preSignUp:
-  handler: src/main/functions/auth/pre-sign-up.handler
+  handler: src/main/functions/auth/cognito/pre-sign-up-trigger.handler
   events:
     - cognitoUserPool:
         pool: ${self:custom.cognito.PoolName}
@@ -48,7 +48,7 @@ preSignUp:
         forceDeploy: true
 
 customMessageTrigger:
-  handler: src/main/functions/auth/custom-message.handler
+  handler: src/main/functions/auth/cognito/custom-message-trigger.handler
   events:
     - cognitoUserPool:
         pool: ${self:custom.cognito.PoolName}
@@ -60,4 +60,4 @@ customMessageTrigger:
 # Look at UserPool.yml for trigger config
 # Do not change this function name without change in the cognito.yml
 preTokenGenerationTrigger:
-  handler: src/main/functions/auth/pre-token-generation.handler
+  handler: src/main/functions/auth/cognito/pre-token-generation-trigger.handler
