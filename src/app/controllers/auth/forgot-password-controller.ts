@@ -20,7 +20,9 @@ export class ForgotPasswordController extends Controller<'public', void> {
   ): Promise<Controller.Response<void>> {
     const { email } = request.body
 
-    await this.forgotPasswordUseCase.execute({ email })
+    try {
+      await this.forgotPasswordUseCase.execute({ email })
+    } catch {}
 
     return { statusCode: 204 }
   }

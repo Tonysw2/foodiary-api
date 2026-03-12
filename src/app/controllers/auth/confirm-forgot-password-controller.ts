@@ -10,7 +10,10 @@ import {
 
 @Injectable()
 @Schema(confirmForgotPasswordSchema)
-export class ConfirmForgotPasswordController extends Controller<'public', void> {
+export class ConfirmForgotPasswordController extends Controller<
+  'public',
+  void
+> {
   constructor(
     private readonly confirmForgotPasswordUseCase: ConfirmForgotPasswordUseCase,
   ) {
@@ -22,11 +25,13 @@ export class ConfirmForgotPasswordController extends Controller<'public', void> 
   ): Promise<Controller.Response<void>> {
     const { email, confirmationCode, newPassword } = request.body
 
-    await this.confirmForgotPasswordUseCase.execute({
-      email,
-      confirmationCode,
-      newPassword,
-    })
+    try {
+      await this.confirmForgotPasswordUseCase.execute({
+        email,
+        confirmationCode,
+        newPassword,
+      })
+    } catch {}
 
     return { statusCode: 204 }
   }
