@@ -1,6 +1,10 @@
 import type { Account } from '@app/entities/account'
+import {
+  PutCommand,
+  type PutCommandInput,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb'
 import { dynamoClient } from '@infra/clients/dynamo-client'
-import { PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { Injectable } from '@kernel/decorators/injectable'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
 import { AppConfig } from '@shared/config/app-config'
@@ -32,14 +36,14 @@ export class AccountRepository {
     return AccountItem.toEntity(account)
   }
 
-  async create(account: Account): Promise<void> {
-    const accountItem = AccountItem.fromEntity(account)
-
-    const command = new PutCommand({
+  getPutCommand(account: Account): PutCommandInput {
+    return {
       TableName: this.appConfig.database.dynamodb.mainTableName,
-      Item: accountItem.toItem(),
-    })
+      Item: AccountItem.fromEntity(account).toItem(),
+    }
+  }
 
-    await dynamoClient.send(command)
+  async create(account: Account): Promise<void> {
+    await dynamoClient.send(new PutCommand(this.getPutCommand(account)))
   }
 }
