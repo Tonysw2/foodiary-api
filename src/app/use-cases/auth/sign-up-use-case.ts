@@ -9,6 +9,8 @@ import { SignUpUnitOfWork } from '@infra/database/dynamo/unit-of-work/sign-up-un
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
 import { AuthGateway } from '@infra/gateways/auth/auth-gateway.js'
 import { Injectable } from '@kernel/decorators/injectable.js'
+// biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
+import { Saga } from '@shared/saga/saga'
 
 @Injectable()
 export class SignUpUseCase {
@@ -16,53 +18,57 @@ export class SignUpUseCase {
     private readonly authGateway: AuthGateway,
     private readonly accountRepository: AccountRepository,
     private readonly signUpUnitOfWork: SignUpUnitOfWork,
+    private readonly saga: Saga,
   ) {}
 
   async execute({
     account,
     profile,
   }: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
-    const accountExists = await this.accountRepository.findByEmail(
-      account.email,
-    )
+    return this.saga.run(async () => {
+      const accountExists = await this.accountRepository.findByEmail(
+        account.email,
+      )
 
-    if (accountExists) {
-      throw new EmailAlreadyInUse()
-    }
+      if (accountExists) {
+        throw new EmailAlreadyInUse()
+      }
 
-    const newAccount = new Account({ email: account.email })
-    const { externalId } = await this.authGateway.signUp({
-      email: account.email,
-      password: account.password,
-      internalId: newAccount.id,
+      const newAccount = new Account({ email: account.email })
+      const { externalId } = await this.authGateway.signUp({
+        email: account.email,
+        password: account.password,
+        internalId: newAccount.id,
+      })
+      newAccount.externalId = externalId
+      this.saga.addCompensation(() => this.authGateway.deleteUser({ externalId }))
+
+      const newProfile = new Profile({
+        accountId: newAccount.id,
+        ...profile,
+        birthDate: new Date(profile.birthDate),
+      })
+      const newGoal = new Goal({
+        accountId: newAccount.id,
+        calories: 2000,
+        proteins: 150,
+        carbohydrates: 200,
+        fats: 67,
+      })
+
+      await this.signUpUnitOfWork.run({
+        account: newAccount,
+        profile: newProfile,
+        goal: newGoal,
+      })
+
+      const { accessToken, refreshToken } = await this.authGateway.signIn({
+        email: account.email,
+        password: account.password,
+      })
+
+      return { accessToken, refreshToken }
     })
-    newAccount.externalId = externalId
-
-    const newProfile = new Profile({
-      accountId: newAccount.id,
-      ...profile,
-      birthDate: new Date(profile.birthDate),
-    })
-    const newGoal = new Goal({
-      accountId: newAccount.id,
-      calories: 2000,
-      proteins: 150,
-      carbohydrates: 200,
-      fats: 67,
-    })
-
-    await this.signUpUnitOfWork.run({
-      account: newAccount,
-      profile: newProfile,
-      goal: newGoal,
-    })
-
-    const { accessToken, refreshToken } = await this.authGateway.signIn({
-      email: account.email,
-      password: account.password,
-    })
-
-    return { accessToken, refreshToken }
   }
 }
 

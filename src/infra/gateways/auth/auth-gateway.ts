@@ -1,6 +1,7 @@
 import { createHmac } from 'node:crypto'
 import { InvalidRefreshToken } from '@app/errors/application/invalid-refresh-token.js'
 import {
+  AdminDeleteUserCommand,
   ConfirmForgotPasswordCommand,
   ForgotPasswordCommand,
   GetTokensFromRefreshTokenCommand,
@@ -101,6 +102,17 @@ export class AuthGateway {
     await cognitoClient.send(command)
   }
 
+  async deleteUser({
+    externalId,
+  }: AuthGateway.DeleteUserParams): Promise<void> {
+    const command = new AdminDeleteUserCommand({
+      UserPoolId: this.appConfig.auth.cognito.pool.id,
+      Username: externalId,
+    })
+
+    await cognitoClient.send(command)
+  }
+
   async confirmForgotPassword({
     email,
     confirmationCode,
@@ -158,6 +170,10 @@ export namespace AuthGateway {
 
   export type ForgotPasswordInput = {
     email: string
+  }
+
+  export type DeleteUserParams = {
+    externalId: string
   }
 
   export type ConfirmForgotPasswordInput = {
