@@ -13,11 +13,11 @@ export const signUpSchema = z.object({
   profile: z.object({
     name: z.string(),
     birthDate: z.string(),
-    gender: z.nativeEnum(Profile.Gender),
+    gender: z.enum(Profile.Gender),
     height: z.number(),
     weight: z.number(),
-    activityLevel: z.nativeEnum(Profile.ActivityLevel),
-    goal: z.nativeEnum(Profile.Goal),
+    activityLevel: z.enum(Profile.ActivityLevel),
+    goal: z.enum(Profile.Goal),
   }),
 })
 

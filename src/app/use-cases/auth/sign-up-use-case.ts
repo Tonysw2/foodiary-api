@@ -2,6 +2,7 @@ import { Account } from '@app/entities/account.js'
 import { Goal } from '@app/entities/goal.js'
 import { Profile } from '@app/entities/profile.js'
 import { EmailAlreadyInUse } from '@app/errors/application/email-already-in-use'
+import { GoalCalculator } from '@app/services/goal-calculator.js'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
 import { AccountRepository } from '@infra/database/dynamo/repositories/account-repository.js'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
@@ -41,19 +42,23 @@ export class SignUpUseCase {
         internalId: newAccount.id,
       })
       newAccount.externalId = externalId
-      this.saga.addCompensation(() => this.authGateway.deleteUser({ externalId }))
+      this.saga.addCompensation(() =>
+        this.authGateway.deleteUser({ externalId }),
+      )
 
       const newProfile = new Profile({
         accountId: newAccount.id,
         ...profile,
         birthDate: new Date(profile.birthDate),
       })
+      const { calories, proteins, carbohydrates, fats } =
+        GoalCalculator.calculate(newProfile)
       const newGoal = new Goal({
         accountId: newAccount.id,
-        calories: 2000,
-        proteins: 150,
-        carbohydrates: 200,
-        fats: 67,
+        calories,
+        proteins,
+        carbohydrates,
+        fats,
       })
 
       await this.signUpUnitOfWork.run({
