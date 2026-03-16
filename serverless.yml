@@ -32,6 +32,7 @@ build:
 functions:
   - ${file(./sls/functions/auth.yml)}
   - ${file(./sls/functions/meals.yml)}
+  - ${file(./sls/functions/users.yml)}
 
 resources:
   - ${file(./sls/resources/cognito.yml)}

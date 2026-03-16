@@ -1,0 +1,9 @@
+getMe:
+  handler: src/main/functions/users/get-me.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        method: GET
+        path: /users/me
+        authorizer:
+          name: cognitoAuthorizer
