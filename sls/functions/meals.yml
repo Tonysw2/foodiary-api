@@ -1,5 +1,6 @@
 createMeal:
   handler: src/main/functions/meals/create-meal.handler
+  environment: ${file(./sls/config/env.yml)}
   events:
     - httpApi:
         method: POST

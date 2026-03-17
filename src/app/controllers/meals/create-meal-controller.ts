@@ -1,17 +1,39 @@
 import { Controller } from '@app/contracts/controller.js'
+// biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
+import { CreateMealUseCase } from '@app/use-cases/meals/create-meal-use-case.js'
 import { Injectable } from '@kernel/decorators/injectable.js'
-import KSUID from 'ksuid'
+import { Schema } from '@kernel/decorators/schema.js'
+import {
+  type CreateMealBody,
+  createMealSchema,
+} from './schemas/create-meal-schema.js'
 
 @Injectable()
-export class CreateMealController extends Controller<'private', CreateMealController.Response> {
+@Schema(createMealSchema)
+export class CreateMealController extends Controller<
+  'private',
+  CreateMealController.Response
+> {
+  constructor(private readonly createMealUseCase: CreateMealUseCase) {
+    super()
+  }
+
   protected override async handle(
-    _request: Controller.Request<'private'>,
+    request: Controller.Request<'private', CreateMealBody>,
   ): Promise<Controller.Response<CreateMealController.Response>> {
-    return {
-      statusCode: 200,
-      body: {
-        mealId: KSUID.randomSync().string,
+    const { file } = request.body
+
+    const { mealId } = await this.createMealUseCase.execute({
+      accountId: request.accountId,
+      file: {
+        size: file.size,
+        inputType: file.inputType,
       },
+    })
+
+    return {
+      statusCode: 201,
+      body: { mealId },
     }
   }
 }
