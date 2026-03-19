@@ -1,4 +1,4 @@
-import type { Meal } from '@app/entities/meal'
+import { Meal } from '@app/entities/meal'
 import { QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { dynamoClient } from '@infra/clients/dynamo-client'
 import { MealItem } from '@infra/database/dynamo/items/meal-item'
@@ -17,6 +17,8 @@ export class ListMealsByDayQuery {
       TableName: this.appConfig.database.dynamodb.mainTableName,
       IndexName: 'GSI1',
       KeyConditionExpression: '#GSI1PK = :GSI1PK',
+      FilterExpression: '#status = :status',
+      ScanIndexForward: false,
       ProjectionExpression: '#GSI1PK, #id, #name, #icon, #foods, #createdAt',
       ExpressionAttributeNames: {
         '#GSI1PK': 'GSI1PK',
@@ -25,12 +27,14 @@ export class ListMealsByDayQuery {
         '#icon': 'icon',
         '#foods': 'foods',
         '#createdAt': 'createdAt',
+        '#status': 'status',
       },
       ExpressionAttributeValues: {
         ':GSI1PK': MealItem.getGSI1PK({
           accountId: input.accountId,
           createdAt: input.date,
         }),
+        ':status': Meal.Status.SUCCESS,
       },
     })
 
