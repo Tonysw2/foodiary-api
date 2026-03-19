@@ -37,3 +37,5 @@ functions:
 resources:
   - ${file(./sls/resources/cognito.yml)}
   - ${file(./sls/resources/main-table.yml)}
+  - ${file(./sls/resources/meals-bucket.yml)}
+  - ${file(./sls/resources/meals-bucket-cdn.yml)}

@@ -5,6 +5,8 @@ const schema = z.object({
   COGNITO_CLIENT_ID: z.string().check(z.minLength(1)),
   COGNITO_CLIENT_SECRET: z.string().check(z.minLength(1)),
   MAIN_TABLE_NAME: z.string().check(z.minLength(1)),
+  MEALS_BUCKET_NAME: z.string().check(z.minLength(1)),
+  MEALS_CDN_URL: z.string().check(z.minLength(1)),
 })
 
 const getEnv = () => {

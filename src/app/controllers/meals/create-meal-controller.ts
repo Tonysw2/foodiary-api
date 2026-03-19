@@ -23,7 +23,7 @@ export class CreateMealController extends Controller<
   ): Promise<Controller.Response<CreateMealController.Response>> {
     const { file } = request.body
 
-    const { mealId } = await this.createMealUseCase.execute({
+    const { mealId, uploadSignature } = await this.createMealUseCase.execute({
       accountId: request.accountId,
       file: {
         size: file.size,
@@ -33,7 +33,10 @@ export class CreateMealController extends Controller<
 
     return {
       statusCode: 201,
-      body: { mealId },
+      body: {
+        mealId,
+        uploadSignature,
+      },
     }
   }
 }
@@ -41,5 +44,6 @@ export class CreateMealController extends Controller<
 export namespace CreateMealController {
   export type Response = {
     mealId: string
+    uploadSignature: string
   }
 }

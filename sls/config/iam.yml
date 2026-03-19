@@ -13,3 +13,10 @@ statements:
       - cognito-idp:AdminDeleteUser
     Resource:
       - !GetAtt UserPool.Arn
+  - Effect: Allow
+    Action:
+      - s3:PutObject
+      - s3:GetObject
+      - s3:DeleteObject
+    Resource:
+      - !Sub "${MealsBucket.Arn}/*"
