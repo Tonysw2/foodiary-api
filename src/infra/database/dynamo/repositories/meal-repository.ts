@@ -1,5 +1,5 @@
 import type { Meal } from '@app/entities/meal'
-import { PutCommand } from '@aws-sdk/lib-dynamodb'
+import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
 import { dynamoClient } from '@infra/clients/dynamo-client'
 import { MealItem } from '@infra/database/dynamo/items/meal-item'
 import { Injectable } from '@kernel/decorators/injectable'
@@ -17,5 +17,33 @@ export class MealRepository {
         Item: MealItem.fromEntity(meal).toItem(),
       }),
     )
+  }
+
+  async findById({
+    accountId,
+    mealId,
+  }: MealRepository.FindByIdParams): Promise<Meal | null> {
+    const command = new GetCommand({
+      TableName: this.appConfig.database.dynamodb.mainTableName,
+      Key: {
+        PK: MealItem.getPK({ accountId, mealId }),
+        SK: MealItem.getSK({ accountId, mealId }),
+      },
+    })
+
+    const { Item } = await dynamoClient.send(command)
+
+    if (!Item) {
+      return null
+    }
+
+    return MealItem.toEntity(Item as MealItem.ItemType)
+  }
+}
+
+export namespace MealRepository {
+  export type FindByIdParams = {
+    accountId: string
+    mealId: string
   }
 }
