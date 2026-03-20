@@ -27,6 +27,7 @@ export class GetMealByIdUseCase {
         status: meal.status,
         createdAt: meal.createdAt,
         inputType: meal.inputType,
+        inputFileKey: meal.inputFileKey,
       },
     }
   }
@@ -47,6 +48,7 @@ export namespace GetMealByIdUseCase {
       foods: Meal.Food[]
       status: Meal.Status
       inputType: Meal.InputType
+      inputFileKey: string
     }
   }
 }
