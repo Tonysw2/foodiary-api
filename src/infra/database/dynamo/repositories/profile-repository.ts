@@ -1,5 +1,10 @@
 import type { Profile } from '@app/entities/profile'
-import { PutCommand, type PutCommandInput } from '@aws-sdk/lib-dynamodb'
+import {
+  GetCommand,
+  PutCommand,
+  type PutCommandInput,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb'
 import { dynamoClient } from '@infra/clients/dynamo-client'
 import { Injectable } from '@kernel/decorators/injectable'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
@@ -19,5 +24,52 @@ export class ProfileRepository {
 
   async create(profile: Profile): Promise<void> {
     await dynamoClient.send(new PutCommand(this.getPutCommand(profile)))
+  }
+
+  async findByAccountId(accountId: string): Promise<Profile | null> {
+    const command = new GetCommand({
+      TableName: this.appConfig.database.dynamodb.mainTableName,
+      Key: {
+        PK: ProfileItem.getPK(accountId),
+        SK: ProfileItem.getSK(accountId),
+      },
+    })
+
+    const { Item: profileItem } = await dynamoClient.send(command)
+
+    if (!profileItem) {
+      return null
+    }
+
+    return ProfileItem.toEntity(profileItem as ProfileItem.ItemType)
+  }
+
+  async save({
+    accountId,
+    name,
+    birthDate,
+    gender,
+    height,
+    weight,
+  }: Profile): Promise<void> {
+    const command = new UpdateCommand({
+      TableName: this.appConfig.database.dynamodb.mainTableName,
+      Key: {
+        PK: ProfileItem.getPK(accountId),
+        SK: ProfileItem.getSK(accountId),
+      },
+      UpdateExpression:
+        'SET #name = :name, birthDate = :birthDate, gender = :gender, height = :height, weight = :weight',
+      ExpressionAttributeNames: { '#name': 'name' },
+      ExpressionAttributeValues: {
+        ':name': name,
+        ':birthDate': birthDate,
+        ':gender': gender,
+        ':height': height,
+        ':weight': weight,
+      },
+    })
+
+    await dynamoClient.send(command)
   }
 }

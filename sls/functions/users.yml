@@ -7,3 +7,13 @@ getMe:
         path: /users/me
         authorizer:
           name: cognitoAuthorizer
+
+updateProfile:
+  handler: src/main/functions/users/update-profile.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        method: PUT
+        path: /users/profile
+        authorizer:
+          name: cognitoAuthorizer
