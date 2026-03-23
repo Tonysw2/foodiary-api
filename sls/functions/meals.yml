@@ -36,3 +36,13 @@ handleMealUpload:
         bucket: ${self:service}-${self:provider.stage}-meals-bucket-${aws:accountId}
         event: s3:ObjectCreated:*
         existing: true
+
+processMeal:
+  handler: src/main/functions/meals/process-meal.handler
+  environment: ${file(./sls/config/env.yml)}
+  memorySize: 1024
+  timeout: 120
+  events:
+    - sqs:
+        arn: !GetAtt MealsQueue.Arn
+        batchSize: 2
