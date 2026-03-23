@@ -10,6 +10,10 @@ import KSUID from 'ksuid'
 export class MealsFileStorageGateway {
   constructor(private readonly appConfig: AppConfig) {}
 
+  getInputFileURL(fileKey: string): string {
+    return `${this.appConfig.cdns.mealsCDN}/${fileKey}`
+  }
+
   static generateInputFileKey({
     accountId,
     inputType,

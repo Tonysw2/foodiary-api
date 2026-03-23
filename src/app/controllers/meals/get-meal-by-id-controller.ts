@@ -55,7 +55,7 @@ export namespace GetMealByIdController {
       icon: string
       foods: Meal.Food[]
       createdAt: string
-      inputFileKey: string
+      inputFileURL: string
     }
   }
 }

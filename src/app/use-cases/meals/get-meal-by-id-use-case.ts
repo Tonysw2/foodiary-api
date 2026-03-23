@@ -2,11 +2,16 @@ import type { Meal } from '@app/entities/meal.js'
 import { ResourceNotFound } from '@app/errors/application/resource-not-found.js'
 // biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
 import { MealRepository } from '@infra/database/dynamo/repositories/meal-repository.js'
+// biome-ignore lint/style/useImportType: value import required for emitDecoratorMetadata
+import { MealsFileStorageGateway } from '@infra/gateways/storage/meals-file-storage-gateway.js'
 import { Injectable } from '@kernel/decorators/injectable.js'
 
 @Injectable()
 export class GetMealByIdUseCase {
-  constructor(private readonly mealRepository: MealRepository) {}
+  constructor(
+    private readonly mealRepository: MealRepository,
+    private readonly mealsFileStorageGateway: MealsFileStorageGateway,
+  ) {}
 
   async execute({
     accountId,
@@ -27,7 +32,7 @@ export class GetMealByIdUseCase {
         status: meal.status,
         createdAt: meal.createdAt,
         inputType: meal.inputType,
-        inputFileKey: meal.inputFileKey,
+        inputFileURL: this.mealsFileStorageGateway.getInputFileURL(meal.inputFileKey),
       },
     }
   }
@@ -48,7 +53,7 @@ export namespace GetMealByIdUseCase {
       foods: Meal.Food[]
       status: Meal.Status
       inputType: Meal.InputType
-      inputFileKey: string
+      inputFileURL: string
     }
   }
 }
