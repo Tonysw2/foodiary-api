@@ -7,6 +7,7 @@ const schema = z.object({
   MAIN_TABLE_NAME: z.string().check(z.minLength(1)),
   MEALS_BUCKET_NAME: z.string().check(z.minLength(1)),
   MEALS_CDN_URL: z.string().check(z.minLength(1)),
+  MEALS_QUEUE_URL: z.string().check(z.minLength(1)),
 })
 
 const getEnv = () => {

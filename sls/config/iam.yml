@@ -20,3 +20,8 @@ statements:
       - s3:DeleteObject
     Resource:
       - !Sub "${MealsBucket.Arn}/*"
+  - Effect: Allow
+    Action:
+      - sqs:SendMessage
+    Resource:
+      - !GetAtt MealsQueue.Arn
