@@ -27,3 +27,12 @@ getMeal:
         path: /meals/{mealId}
         authorizer:
           name: cognitoAuthorizer
+
+handleMealUpload:
+  handler: src/main/functions/meals/handle-meal-upload.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - s3:
+        bucket: ${self:service}-${self:provider.stage}-meals-bucket-${aws:accountId}
+        event: s3:ObjectCreated:*
+        existing: true
