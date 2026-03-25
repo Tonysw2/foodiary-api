@@ -2,8 +2,10 @@ import type { Controller } from '@app/contracts/controller.js'
 import { ApplicationError } from '@app/errors/application/application-error.js'
 import { ErrorCode } from '@app/errors/error-code.js'
 import { HttpError } from '@app/errors/http/http-error.js'
+import { Registry } from '@kernel/di/registry.js'
 import { lambdaBodyParser } from '@main/utils/lambda-body-parser.js'
 import { lambdaErrorResponse } from '@main/utils/lambda-error-response.js'
+import type { Constructor } from '@shared/types/constructor.js'
 import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyEventV2WithJWTAuthorizer,
@@ -13,10 +15,13 @@ import { z } from 'zod/mini'
 
 type Event = APIGatewayProxyEventV2 | APIGatewayProxyEventV2WithJWTAuthorizer
 
-// biome-ignore lint/suspicious/noExplicitAny: adapter accepts both public and private controllers
-export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
+export function lambdaHttpAdapter(
+  ControllerClass: Constructor<Controller<any, unknown>>,
+) {
   return async (event: Event): Promise<APIGatewayProxyResultV2> => {
     try {
+      const controller = Registry.getInstance().resolve(ControllerClass)
+
       const body = lambdaBodyParser(event.body)
       const params = event.pathParameters ?? {}
       const queryParams = event.queryStringParameters ?? {}
