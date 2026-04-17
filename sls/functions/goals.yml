@@ -1,0 +1,9 @@
+updateGoal:
+  handler: src/main/functions/users/update-goal.handler
+  environment: ${file(./sls/config/env.yml)}
+  events:
+    - httpApi:
+        method: PUT
+        path: /users/goals
+        authorizer:
+          name: cognitoAuthorizer
